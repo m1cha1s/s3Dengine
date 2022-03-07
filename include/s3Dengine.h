@@ -14,6 +14,7 @@ typedef enum S3D_Direction {
 
 typedef struct S3D_Camera {
     float x, y;
+    float cx, cy;
     float angle;
     float fov;
     float renderDistance;
