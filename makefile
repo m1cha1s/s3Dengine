@@ -1,6 +1,6 @@
 # Set it to your SDL2 library location
-SDL_DIR = C:/Users/msule/sync/frameworks/SDL2/SDL2-2.0.20/x86_64-w64-mingw32
-# SDL_DIR = C:/Users/schon/sync/frameworks/SDL2/SDL2-2.0.20/x86_64-w64-mingw32
+# SDL_DIR = C:/Users/msule/sync/frameworks/SDL2/SDL2-2.0.20/x86_64-w64-mingw32
+SDL_DIR = C:/Users/schon/sync/frameworks/SDL2/SDL2-2.0.20/x86_64-w64-mingw32
 
 SDL_INCLUDE_ARGS = -I $(SDL_DIR)/include
 SDL_LIBRARY_ARGS = -L $(SDL_DIR)/lib -lmingw32 -lSDL2main -lSDL2

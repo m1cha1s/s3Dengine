@@ -1,35 +1,58 @@
 #ifndef S3DENGINE_H
 #define S3DENGINE_H
 
+#include <stdbool.h>
 #include <SDL2/SDL.h>
 
-typedef enum S3D_Direction {
+typedef enum Direction {
     FOREWARD,
     BACKWARD,
     LEFT,
     RIGHT,
     UP,
     DOWN,
-} S3D_Direction;
+} Direction;
 
-typedef struct S3D_Camera {
-    float x, y;
-    float cx, cy;
+typedef struct xy {
+    float x,y;
+} xy;
+
+typedef struct Hit {
+    bool hit;
+    xy pos;
+}Hit;
+
+typedef struct Player {
+    xy pos;
     float angle;
     float fov;
     float renderDistance;
-} S3D_Camera;
+} Player;
 
-typedef struct S3D_Wall {
-    float x1, y1;
-    float x2, y2;
-} S3D_Wall;
+typedef struct Wall {
+    xy p1, p2;
+} Wall;
 
-void S3D_MoveCamera(S3D_Camera *camera, S3D_Direction direction, float distance);
-void S3D_RotateCamera(S3D_Camera *camera, float angle);
+typedef struct Map {
+    int wallCount;
+    Wall *walls;
+    xy spawn;
+}Map;
 
-SDL_FRect S3D_RectCamera(S3D_Camera camera);
+typedef struct Ray {
+    xy pos;
+    float angle;
+} Ray;
 
-void S3D_DrawWall(SDL_Renderer *renderer, S3D_Camera camera, S3D_Wall wall);
+float mapf(float x, float in_min, float in_max, float out_min, float out_max);
+
+void MovePlayer(Player *player, Direction direction, float distance);
+void RotatePlayer(Player *player, float angle);
+void RenderPlayer(SDL_Renderer *renderer, Player player, Map map);
+
+Map ReadMapFile(char *filename);
+
+Hit RayCast(Ray ray, Wall wall);
+
 
 #endif

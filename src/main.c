@@ -9,6 +9,9 @@
 #define WIDTH 680
 #define HEIGHT 480
 
+#define WALKING_SPEED 0.05f
+#define ROTATION_SPEED 0.01f
+
 SDL_Window *window;
 SDL_Renderer *renderer;
 
@@ -18,8 +21,13 @@ int main(int argc, char* argv[]) {
     
     init(); // Initialize SDL2
 
-    S3D_Wall wall = {100, 100, 200, 100};
-    S3D_Camera camera = {200, 150, WIDTH/2, HEIGHT/2, 0, 90, 100};
+
+    Map map = ReadMapFile("map.map");
+    
+    Player player = {{0, 0}, 0, M_PI/6.0, 100};
+    
+    player.pos.x = map.spawn.x;
+    player.pos.y = map.spawn.y;
 
     bool keep_window_open = true;
     while (keep_window_open) {
@@ -38,14 +46,14 @@ int main(int argc, char* argv[]) {
         const unsigned char* keystates = SDL_GetKeyboardState(NULL); // Poll the keyboard
 
         // Movement
-        if(keystates[SDL_SCANCODE_W]) S3D_MoveCamera(&camera, FOREWARD, 1.0f);
-        if(keystates[SDL_SCANCODE_S]) S3D_MoveCamera(&camera, BACKWARD, 1.0f);
-        if(keystates[SDL_SCANCODE_A]) S3D_MoveCamera(&camera, RIGHT, 1.0f);
-        if(keystates[SDL_SCANCODE_D]) S3D_MoveCamera(&camera, LEFT, 1.0f);
+        if(keystates[SDL_SCANCODE_W]) MovePlayer(&player, FOREWARD, WALKING_SPEED);
+        if(keystates[SDL_SCANCODE_S]) MovePlayer(&player, BACKWARD, WALKING_SPEED);
+        if(keystates[SDL_SCANCODE_A]) MovePlayer(&player, RIGHT, WALKING_SPEED);
+        if(keystates[SDL_SCANCODE_D]) MovePlayer(&player, LEFT, WALKING_SPEED);
 
         // Rotation
-        if(keystates[SDL_SCANCODE_J]) S3D_RotateCamera(&camera, -M_PI / 48.0f);
-        if(keystates[SDL_SCANCODE_K]) S3D_RotateCamera(&camera, M_PI / 48.0f);
+        if(keystates[SDL_SCANCODE_J]) RotatePlayer(&player, -ROTATION_SPEED);
+        if(keystates[SDL_SCANCODE_K]) RotatePlayer(&player, ROTATION_SPEED);
 
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -53,12 +61,15 @@ int main(int argc, char* argv[]) {
 
         // Set color to draw lines
         SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-        
-        S3D_DrawWall(renderer, camera, wall);
 
-        SDL_FRect rect = S3D_RectCamera(camera);
-        SDL_RenderDrawRectF(renderer, &rect);
-        // SDL_RenderDrawLineF(renderer, camera.cx, camera.cy, camera.cx + 10*cosf(camera.angle), camera.cy + 10*sinf(camera.angle));
+        RenderPlayer(renderer, player, map);
+
+        // for(int wall = 0; wall < map.wallCount; wall ++) {
+        //     SDL_RenderDrawLineF(renderer, walls[wall].p1.x, walls[wall].p1.y, walls[wall].p2.x, walls[wall].p2.y);
+        // }
+
+        // SDL_RenderDrawLineF(renderer, player.pos.x, player.pos.y, 20 * cosf(player.angle) + player.pos.x, 20 * sinf(player.angle) + player.pos.y);
+
 
         SDL_RenderPresent(renderer);
 
